@@ -118,16 +118,18 @@ def ProxiesOptions(proxy_type: int):
     print(quotes.AvailableProxies + str(proxiescount) + ' ' + f'SOCKS{proxy_type}')
     return proxies, proxiescount
 
+def signature(lines = '------------------------------------------------------------------------------------------------------------------------', quote = 'A fully-skidded L7-HTTP SOCKS attack script written in Python 3 using PySocks <import socks | pip install PySocks>'):
+    print(f.LIGHTRED_EX + lines)
+    print(banner)
+    print(f.LIGHTRED_EX + lines)
+    print(quote)
+    print(f.LIGHTRED_EX + lines)
 def clearConsole():
     command = 'clear'
     if os.name in ('nt', 'dos'):  # If Machine is running on Windows, use cls
         command = 'cls'
     os.system(command)
-    print(f.LIGHTRED_EX + '------------------------------------------------------------------------------------------------------------------------')
-    print(banner)
-    print(f.LIGHTRED_EX + '------------------------------------------------------------------------------------------------------------------------')
-    print('A fully-skidded L7-HTTP SOCKS attack script written in Python 3 using PySocks <import socks | pip install PySocks>')
-    print(f.LIGHTRED_EX + '------------------------------------------------------------------------------------------------------------------------')
+
 
 def gen_user_agent():
 	platform = Choice(['Macintosh', 'Windows', 'X11']) #radom
@@ -279,11 +281,7 @@ def main():
         i.join()
     print('[~] Stopped')
 if __name__ == '__main__':
-    print(f.LIGHTRED_EX + '------------------------------------------------------------------------------------------------------------------------')
-    print(banner)
-    print(f.LIGHTRED_EX + '------------------------------------------------------------------------------------------------------------------------')
-    print('A fully-skidded L7-HTTP SOCKS attack script written in Python 3 using PySocks <import socks | pip install PySocks>')
-    print(f.LIGHTRED_EX + '------------------------------------------------------------------------------------------------------------------------')
+    signature()
     print(quotes.CheckingInternet)
     try:
         r = requests.get('https://myexternalip.com/raw', timeout = 7)
