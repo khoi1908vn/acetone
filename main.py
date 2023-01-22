@@ -270,7 +270,7 @@ def main():
             time.sleep(0.05)
         except KeyboardInterrupt:
             break
-    print('[~] Stopping...', end= '                                                   ')
+    print('[~] Stopping...', end= '                                                                      \n')
     print('[~] Setting internal flag to False...')
     event.clear()
     print('[~] Set! Trying to close the program...')
