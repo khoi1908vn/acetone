@@ -6,7 +6,7 @@ init(convert = True)
 banner = f"""{f.RED}
 ╔═╗┌─┐┌─┐┌┬┐┌─┐┌┐┌┌─┐
 ╠═╣│  ├┤  │ │ ││││├┤ 
-╩ ╩└─┘└─┘ ┴ └─┘┘└┘└─┘   (CH3)2CO L7-HTTP Method
+╩ ╩└─┘└─┘ ┴ └─┘┘└┘└─┘ (CH3)2CO L7-HTTP Method
 {f.RESET}"""
 class quotes:
     PleaseEnterTheCorrectOption = '[!] Please enter the correct option'
