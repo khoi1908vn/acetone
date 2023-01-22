@@ -129,6 +129,7 @@ def clearConsole():
     if os.name in ('nt', 'dos'):  # If Machine is running on Windows, use cls
         command = 'cls'
     os.system(command)
+    signature()
 
 
 def gen_user_agent():
@@ -256,13 +257,14 @@ def main():
     for _ in range(thread_num):
         th = threading.Thread(target = attack_thread, args = (event, socks_type, target, port, protocol, 100, path, proxies, cookies), daemon = True)
         process_list.append(th)
-    input('[?] Press enter to start...')
+    input('[?] Press enter to start...\n')
     print('[>] Starting threads in waiting mode...')
     for i in process_list:
         i.start() # make the thread wait
     print('[>] Waking up threads...')
     event.set() # start all threads
     print('[>] Started the attack! Press Ctrl + C (SIG.TERM) anytime to stop the attack.')
+    print('[*] WARNING: This might slow down your internet connection so you might experience lags even in dstats')
     start = time.time()
     while event.is_set():
         try:

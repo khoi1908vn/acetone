@@ -131,3 +131,9 @@ dmypy.json
 # Obfuscator
 hyperion.py
 specter.py
+
+# any command prompt runner file
+*.bat
+
+# any unecessary .txt files
+*.txt
