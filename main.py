@@ -253,7 +253,7 @@ def main():
 
     # press enter to continue
     clearConsole()
-    print(quotes.AttackInfo + line_break + f'- Target: {target}' + line_break + f'- Threads: {thread_num}' + line_break + f'- Proxies {proxiescount} SOCKS{socks_type}' + line_break + f'Time: {str(attack_time if attack_time != 0 else "<inf>")}s')
+    print(quotes.AttackInfo + line_break + f'- Target: {target}' + line_break + f'- Threads: {thread_num}' + line_break + f'- Proxies {proxiescount} SOCKS{socks_type}' + line_break + f'- Time: {str(attack_time if attack_time != 0 else "<inf>")}s')
     print('\n')
     # prepare
     event = threading.Event()
