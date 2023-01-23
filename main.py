@@ -73,8 +73,9 @@ class make_resources:
         "https://www.google.co.ao/search?q=",
     ]
 
-def closeProgram(reason: str = '\n[~] Exiting...'):
+def closeProgram(reason: str = '\n[~] Exiting... Press Enter to close the window...'):
     print(reason)
+    input()
     exit()
 
 def ParseUrl(url_to_parse: str):
