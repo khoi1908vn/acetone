@@ -219,7 +219,11 @@ def attack_thread(event: threading.Event, socks_type: int, target: str, port: in
                 s.close()
             except: s.close()
         except: s.close()
-        
+
+def attack(event: threading.Event, socks_type: int, target: str, port: int, protocol: str, path: str, proxies: list, cookies: str, multiple: int = 100, time: int = 0):
+    if __name__ != '__main__': print(); signature()
+
+
 
 def main():
     # input
@@ -260,6 +264,7 @@ def main():
     # prepare
     event = threading.Event()
     event.clear()
+    # this can be split into a def to import in another process
     process_list = []
     for _ in range(thread_num):
         th = threading.Thread(target = attack_thread, args = (event, socks_type, target, port, protocol, 100, path, proxies, cookies), daemon = True)
@@ -284,7 +289,6 @@ def main():
             break
     else: # this only happen when time is up, in inf mode the 'break' will not execute this (python while break else rule)
         print(f'[~] Finished attack in {str(attack_time)}s')
-
     print('[~] Stopping...', end= '                                                                      \n')
     print('[~] Setting internal flag to False...')
     event.clear()
@@ -298,15 +302,13 @@ if __name__ == '__main__':
     signature()
     print(quotes.CheckingInternet)
     try:
-        r = requests.get('https://myexternalip.com/raw', timeout = 7)
+        r = str(requests.get('https://myexternalip.com/raw', timeout = 7).text)
     except requests.RequestException:
         test_allowed = False
         if test_allowed:
             print('[!] Something wrong with your connection! Checking with a aternative server...')
             try:
-                r = requests.get('https://ipinfo.io/', timeout = 7)
-                r = json.load(r.json())
-                r = r['ip']
+                r = requests.get('https://ipinfo.io/', timeout = 7).json()['ip']
             except Exception as e:
                 print(f'[!] Something wrong with your connection! error {e}')
                 input('Press Enter to exit...')
@@ -318,6 +320,5 @@ if __name__ == '__main__':
             input('Press Enter to exit...')
             closeProgram()
     else:
-        r = str(r.text)
         print('Done! Your IP address is: ' + r)
     main()
