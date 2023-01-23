@@ -276,7 +276,7 @@ def main():
         try:
             el = time.time() - start 
             el = 1 if el == 0 else el
-            print(f'[~] Attacking {str(target)}:{str(port)} ({str(thread_num)}thrs {str(proxiescount)}prxs) | {round(el)}s elapsed', end = '\r')
+            print(f'[~] Attacking {str(target)}:{str(port)} ({str(thread_num)}thrs {str(proxiescount)}prxs) | {round(el)}/{str(attack_time if attack_time != 0 else "inf")}s elapsed', end = '\r')
             time.sleep(0.05)
         except KeyboardInterrupt:
             break
