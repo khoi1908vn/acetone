@@ -37,7 +37,7 @@ Acetone(url=url, socks_type=socks_type, proxies_path=proxies_path, thread_num=th
 
 This project is private and not yet ready to receive pull requests.
 
-After this repo is public, all contribution is appreiciated!
+After this repo is public, any contribution is appreiciated!
 
 ## License
 
