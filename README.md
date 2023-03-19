@@ -1,6 +1,6 @@
 # acetone
 
-a L7-HTTP website attacking method written in Python 3 (PySocks lib)
+a L7-HTTP website attacking method written in Python 3 (PySocks lib) - Educational purpose only, i want to show how a non-protected website can be easily down :/
 
 ## Installation
 
@@ -14,7 +14,7 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-
+(not yet implemented) 
 Import the ``Acetone()`` class and run it in your script:
 
 ```python
